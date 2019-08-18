@@ -8,7 +8,7 @@ import (
 	"go.stevenxie.me/gopkg/cmdutil"
 
 	"github.com/cockroachdb/errors"
-	"go.stevenxie.me/api/pkg/zero"
+	"go.stevenxie.me/gopkg/zero"
 	"gopkg.in/yaml.v2"
 )
 
