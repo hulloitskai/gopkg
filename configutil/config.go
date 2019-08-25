@@ -5,11 +5,10 @@ import (
 	"io"
 	"os"
 
-	"go.stevenxie.me/gopkg/cmdutil"
-
 	"github.com/cockroachdb/errors"
+	"go.stevenxie.me/gopkg/cmdutil"
 	"go.stevenxie.me/gopkg/zero"
-	"gopkg.in/yaml.v2"
+	yaml "gopkg.in/yaml.v2"
 )
 
 // TryLoadConfig loads configuration data from the first existing file in

@@ -1,10 +1,9 @@
 package configutil
 
 import (
-	"go.stevenxie.me/gopkg/cmdutil"
-
 	"github.com/cockroachdb/errors"
 	"github.com/joho/godotenv"
+	"go.stevenxie.me/gopkg/cmdutil"
 )
 
 // LoadEnv attempts to loads environment variables from 'dotenv' files, as
