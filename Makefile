@@ -144,7 +144,7 @@ go-bench: # Run benchmarks.
 	 $(__GOTEST) -run=^$$ -bench=. -benchmem ./... $(__ARGS)
 
 
-# == Hacks ==
+# HACKS:
 # These targets are hacks that allow for Make targets to receive
 # pseudo-arguments.
 .PHONY: __FORCE

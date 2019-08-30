@@ -27,13 +27,14 @@ func TryLoadConfig(cfg zero.Interface, filenames ...string) error {
 			"configutil: loading '%s'", name,
 		)
 	}
-	return ErrConfigNotFound
+
+	err := ErrNotFound
+	return errors.WithDetailf(err, "Tried loading config files at: %v", filenames)
 }
 
-// ErrConfigNotFound is returned by TryLoadConfig when no config files could
+// ErrNotFound is returned by TryLoadConfig when no config files could
 // be found at any of the possible locations.
-var ErrConfigNotFound = stderrs.New("configutil: no config files were found " +
-	"at the specified locations")
+var ErrNotFound = stderrs.New("configutil: no matching files found")
 
 // MustLoadConfig is like TryLoadConfig, but panics when an error occurs.
 func MustLoadConfig(cfg zero.Interface, filenames ...string) {
