@@ -9,10 +9,10 @@ import (
 // ComponentKey is the field key used to store the component field.
 const ComponentKey = "component"
 
-// AppendComponent appends to the component field in the logrus.Entry.
+// WithComponent appends to the component field in the logrus.Entry.
 //
 // This is used to namespace log entries.
-func AppendComponent(e *logrus.Entry, component ...string) *logrus.Entry {
+func WithComponent(e *logrus.Entry, component ...string) *logrus.Entry {
 	if c, ok := e.Data[ComponentKey].(string); ok {
 		component = append([]string{c}, component...)
 	}
