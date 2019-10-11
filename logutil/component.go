@@ -16,6 +16,5 @@ func WithComponent(e *logrus.Entry, component ...string) *logrus.Entry {
 	if c, ok := e.Data[ComponentKey].(string); ok {
 		component = append([]string{c}, component...)
 	}
-	e.Data[ComponentKey] = strings.Join(component, "::")
-	return e
+	return e.WithField(ComponentKey, strings.Join(component, "::"))
 }
