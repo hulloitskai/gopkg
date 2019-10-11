@@ -12,9 +12,10 @@ const ComponentKey = "component"
 // AppendComponent appends to the component field in the logrus.Entry.
 //
 // This is used to namespace log entries.
-func AppendComponent(e *logrus.Entry, component ...string) {
+func AppendComponent(e *logrus.Entry, component ...string) *logrus.Entry {
 	if c, ok := e.Data[ComponentKey].(string); ok {
 		component = append([]string{c}, component...)
 	}
 	e.Data[ComponentKey] = strings.Join(component, "::")
+	return e
 }
