@@ -3,7 +3,6 @@ package configutil
 import (
 	"github.com/cockroachdb/errors"
 	"github.com/joho/godotenv"
-	"go.stevenxie.me/gopkg/cmdutil"
 )
 
 // LoadEnv attempts to loads environment variables from 'dotenv' files, as
@@ -38,5 +37,5 @@ func LoadEnv(filenames ...string) error {
 
 // MustLoadEnv is like LoadEnv, but panics when an error is encountered.
 func MustLoadEnv(filenames ...string) {
-	cmdutil.Must(LoadEnv(filenames...))
+	must(LoadEnv(filenames...))
 }

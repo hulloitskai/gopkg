@@ -13,10 +13,10 @@ ifeq ($(shell ls -1 go.mod 2> /dev/null),go.mod)
 	GOMODULE = $(shell cat go.mod | head -1 | awk '{print $$2}')
 endif
 
-# Custom Go linker flag.
-LDFLAGS = -X $(GOMODULE)/internal.Version=$(VERSION)
+# # Custom Go linker flag.
+# LDFLAGS = -X $(GOMODULE)/internal.Version=$(VERSION)
 
-# Project variables:
+# # Project variables:
 # GOENV        ?= development
 # GODEFAULTCMD =  server
 
@@ -50,7 +50,8 @@ clean: # Clean build artifacts.
 	@$(MAKE) go-clean -- $(__ARGS)
 
 lint: # Lint and check code.
-	@$(MAKE) go-lint -- $(__ARGS) &&
+	@$(MAKE) go-lint -- $(__ARGS) && \
+	 $(MAKE) proto-lint -- $(__ARGS)
 test: # Run tests.
 	@$(MAKE) go-test -- $(__ARGS)
 review: # Lint code and run tests.
@@ -172,6 +173,19 @@ go-bench: # Run benchmarks.
 	@$(__GOENV) && \
 	 echo "Running benchmarks with 'go test -bench=.'..." && \
 	 $(__GOTEST) -run=^$$ -bench=. -benchmem ./... $(__ARGS)
+
+
+# Protobuf:
+.PHONY: proto-lint
+__PROTOTOOL = prototool
+
+proto-lint:
+	@echo "Formatting proto3 files with 'prototool'..." && \
+	 $(__PROTOTOOL) format -l -- $(__ARGS); EXIT=$$?; \
+	 $(__PROTOTOOL) format -w -- $(__ARGS) && \
+	 echo "Linting proto3 files with 'prototool'..." && \
+	 $(__PROTOTOOL) lint -- $(__ARGS); EXIT="$$((EXIT | $$?))"; \
+	 echo done && exit $$EXIT
 
 
 # HACKS:

@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/cockroachdb/errors"
-	"go.stevenxie.me/gopkg/cmdutil"
 	"go.stevenxie.me/gopkg/zero"
 	yaml "gopkg.in/yaml.v2"
 )
@@ -38,7 +37,13 @@ var ErrNotFound = stderrs.New("configutil: no matching files found")
 
 // MustLoadConfig is like TryLoadConfig, but panics when an error occurs.
 func MustLoadConfig(cfg zero.Interface, filenames ...string) {
-	cmdutil.Must(TryLoadConfig(cfg, filenames...))
+	must(TryLoadConfig(cfg, filenames...))
+}
+
+func must(err error) {
+	if err != nil {
+		panic(err)
+	}
 }
 
 // LoadConfig loads configuration data from a file into cfg.
