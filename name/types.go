@@ -1,11 +1,11 @@
 package name
 
 import (
-	"errors"
 	"reflect"
 	"runtime"
 	"strings"
 
+	"github.com/cockroachdb/errors"
 	"go.stevenxie.me/gopkg/zero"
 )
 
@@ -40,6 +40,9 @@ func OfFunc(v zero.Interface) string {
 // OfFuncFull returns the full name of a function, within the context of its
 // import path.
 func OfFuncFull(v zero.Interface) string {
+	if k := reflect.TypeOf(v).Kind(); k != reflect.Func {
+		panic(errors.Newf("name: non-function type '%s'", k.String()))
+	}
 	f := runtime.FuncForPC(reflect.ValueOf(v).Pointer())
 	return f.Name()
 }
