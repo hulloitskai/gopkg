@@ -14,7 +14,7 @@ import (
 // It returns a snake-cased string containing the value's full type name
 // (excluding the package domain).
 func SQLTableFor(v zero.Interface) string {
-	t := getType(v)
+	t := getElem(v)
 	if t.Kind() == reflect.Func {
 		panic(errors.New("name: kind may not be 'reflect.Func'"))
 	}

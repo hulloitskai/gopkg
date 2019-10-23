@@ -46,6 +46,7 @@ func ExampleWithMethod() {
 
 	ss := SomeStruct{log: logrus.NewEntry(l)}
 	ss.LogWithMethod()
+
 	// Output:
 	// level=info msg="Hello from method!" method=LogWithMethod
 }

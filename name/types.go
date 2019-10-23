@@ -11,7 +11,7 @@ import (
 
 // OfType returns the type name of a value.
 func OfType(v zero.Interface) string {
-	t := getType(v)
+	t := getElem(v)
 	if t.Kind() == reflect.Func {
 		return OfFunc(v)
 	}
@@ -20,7 +20,7 @@ func OfType(v zero.Interface) string {
 
 // OfTypeFull returns the full type name of a value, including its import path.
 func OfTypeFull(v zero.Interface) string {
-	t := getType(v)
+	t := getElem(v)
 	if t.Kind() == reflect.Func {
 		return OfFuncFull(v)
 	}
@@ -57,7 +57,7 @@ func OfMethod(v zero.Interface) string {
 	return name[tailIndex+1:]
 }
 
-func getType(v zero.Interface) reflect.Type {
+func getElem(v zero.Interface) reflect.Type {
 	t := reflect.TypeOf(v)
 	switch t.Kind() {
 	case reflect.Ptr, reflect.Interface:
