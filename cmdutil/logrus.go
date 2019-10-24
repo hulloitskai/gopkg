@@ -84,8 +84,8 @@ func NewLogger(opts ...LogrusOption) *logrus.Entry {
 	return logrus.NewEntry(log)
 }
 
-// WithLogrusSentryHook adds a Sentry reporting hook to a logrus.Logger.
-func WithLogrusSentryHook(rc *raven.Client) LogrusOption {
+// WithSentryHook adds a Sentry reporting hook to a logrus.Logger.
+func WithSentryHook(rc *raven.Client) LogrusOption {
 	return func(cfg *LogrusConfig) { cfg.Raven = rc }
 }
 

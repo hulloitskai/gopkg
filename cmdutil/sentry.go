@@ -3,7 +3,6 @@ package cmdutil
 import (
 	"os"
 
-	raven "github.com/getsentry/raven-go"
 	sentry "github.com/getsentry/sentry-go"
 	"go.stevenxie.me/gopkg/configutil"
 )
@@ -21,6 +20,11 @@ func NewSentry(opts ...SentryOption) *sentry.Client {
 		Fatalf("Failed to build Sentry client: %v\n", err)
 	}
 	return client
+}
+
+// WithRelease sets the release tag for a sentry.Client.
+func WithRelease(release string) SentryOption {
+	return func(cfg *SentryConfig) { cfg.Release = release }
 }
 
 // InitSentry initializes the current sentry.Hub.
@@ -52,40 +56,6 @@ func sentryClientOptions(opts ...SentryOption) sentry.ClientOptions {
 	}
 
 	return clientOpts
-}
-
-// NewRaven creates a new raven.Client.
-func NewRaven(opts ...SentryOption) *raven.Client {
-	var cfg SentryConfig
-	for _, opt := range opts {
-		opt(&cfg)
-	}
-
-	dsn, ok := os.LookupEnv(EnvSentryDSN)
-	if !ok {
-		Fatalf(
-			"cmdutil: missing environment variable '%s'\n",
-			EnvSentryDSN,
-		)
-	}
-	rc, err := raven.New(dsn)
-	if err != nil {
-		Fatalf("Failed to build Raven client: %v\n", err)
-	}
-
-	// Configure client.
-	if env, ok := configutil.LookupGoEnv(); ok {
-		rc.SetEnvironment(env)
-	}
-	if r := cfg.Release; r != "" {
-		rc.SetRelease(r)
-	}
-	return rc
-}
-
-// WithSentryRelease sets the release tag for a raven.Client.
-func WithSentryRelease(release string) SentryOption {
-	return func(cfg *SentryConfig) { cfg.Release = release }
 }
 
 type (
