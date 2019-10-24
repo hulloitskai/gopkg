@@ -1,6 +1,8 @@
 package logutil
 
 import (
+	"strings"
+
 	"go.stevenxie.me/gopkg/name"
 
 	"github.com/cockroachdb/errors"
@@ -16,28 +18,32 @@ const (
 	MethodKey = "method"
 )
 
-// AddComponent appends the component name to the logrus.Entry.
-func AddComponent(e *logrus.Entry, v zero.Interface) *logrus.Entry {
+const _componentSep = "::"
+
+// WithComponent appends the type name of v (the component containing the
+// logger) to a logrus.Entry.
+func WithComponent(e *logrus.Entry, v zero.Interface) *logrus.Entry {
 	name := name.OfType(v)
 	if _, ok := e.Data[ComponentKey]; !ok {
 		return e.WithField(ComponentKey, name)
 	}
 
-	// Component name exists, so append current component to it.
-	var (
-		field = e.Data[ComponentKey]
-		cs    []string
-	)
-	if c, ok := field.(string); ok {
-		cs = append(cs, c)
-	} else if cs, ok = field.([]string); !ok {
-		panic(errors.Newf(
-			"logutil: entry contains component field of unknown type '%T'",
-			field,
-		))
+	// Extract existing components, if any.
+	var components []string
+	if field, ok := e.Data[ComponentKey]; ok {
+		cstr, ok := field.(string)
+		if !ok {
+			panic(errors.Newf(
+				"logutil: entry contains component field of unknown type '%T'",
+				field,
+			))
+		}
+		components = append(components, cstr)
 	}
-	cs = append(cs, name)
-	return e.WithField(ComponentKey, cs)
+
+	// Append latest component name to
+	components = append(components, name)
+	return e.WithField(ComponentKey, strings.Join(components, _componentSep))
 }
 
 // WithMethod adds the name of the method v to the logrus.Entry.

@@ -4,7 +4,7 @@ __TAG = $(shell git describe --tags --always 2> /dev/null)
 ifneq ($(__TAG),)
 	VERSION ?= $(shell echo "$(__TAG)" | cut -c 2-)
 else
-	VERSION ?= undefined
+	VERSION ?= HEAD
 endif
 
 # Go module name.
@@ -28,7 +28,7 @@ endif
 __ARGS = $(filter-out $@,$(MAKECMDGOALS))
 
 __default:
-	@$(MAKE) lint -- $(__ARGS)
+	@$(MAKE) run -- $(__ARGS)
 __unknown:
 	@echo "Target '$(__ARGS)' not configured."
 
@@ -117,14 +117,24 @@ __GOVERIFYCMD = \
     echo "No build package was specified." && exit 1; \
   fi
 
+
+GOREGEX  ?= \.go$
+__REFLEX  = reflex -d none
+__GORUN   = go run $(GOBUILDFLAGS) $(GORUNFLAGS) $(__GOCMD) $(__GOARGS)
+
 go-run:
 	@$(__GOENV) && $(__GOVERIFYCMD) && \
-	 echo "Running with 'go run'..." && \
-	 go run $(GOBUILDFLAGS) $(GORUNFLAGS) $(__GOCMD) $(__GOARGS)
+	 if command -v $(__REFLEX) > /dev/null; then \
+	   echo "Running with 'reflex [...] go run'..." && \
+	   $(__REFLEX) -sr '$(GOREGEX)' -- $(__GORUN); \
+	 else \
+	   echo "Running with 'go run'.." && \
+	   go run $(GOBUILDFLAGS) $(GORUNFLAGS) $(__GOCMD) $(__GOARGS); \
+	 fi
 go-build:
 	@$(__GOENV) && \
 	 echo "Building with 'go build'..." && \
-	 go build $(GOBUILDFLAGS) -o $(GOBUILDDIR)/$(__GOCMDNAME) \
+	 go build $(GOBUILDFLAGS) -o "$(GOBUILDDIR)/$(__GOCMDNAME)" \
 	   $(__GOCMD) $(__GOARGS) && \
 	 echo done
 go-clean:
@@ -173,19 +183,6 @@ go-bench: # Run benchmarks.
 	@$(__GOENV) && \
 	 echo "Running benchmarks with 'go test -bench=.'..." && \
 	 $(__GOTEST) -run=^$$ -bench=. -benchmem ./... $(__ARGS)
-
-
-# Protobuf:
-.PHONY: proto-lint
-__PROTOTOOL = prototool
-
-proto-lint:
-	@echo "Formatting proto3 files with 'prototool'..." && \
-	 $(__PROTOTOOL) format -l -- $(__ARGS); EXIT=$$?; \
-	 $(__PROTOTOOL) format -w -- $(__ARGS) && \
-	 echo "Linting proto3 files with 'prototool'..." && \
-	 $(__PROTOTOOL) lint -- $(__ARGS); EXIT="$$((EXIT | $$?))"; \
-	 echo done && exit $$EXIT
 
 
 # HACKS:
