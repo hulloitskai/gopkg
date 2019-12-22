@@ -3,6 +3,7 @@ package cmdutil
 import (
 	"io"
 	"os"
+	"strings"
 
 	"github.com/dmksnnk/sentryhook"
 	raven "github.com/getsentry/raven-go"
@@ -15,6 +16,7 @@ import (
 const (
 	EnvLogrusLevel  = "LOGRUS_LEVEL"
 	EnvLogrusFormat = "LOGRUS_FORMAT"
+	EnvLogrusCaller = "LOGRUS_CALLER"
 )
 
 // Valid environment values for the key EnvLogrusFormat.
@@ -39,6 +41,15 @@ func NewLogger(opts ...LogrusOption) *logrus.Entry {
 	// Create logger.
 	log := logrus.New()
 	log.SetOutput(cfg.Output)
+
+	// Set 'report caller' option.
+	{
+		report := os.Getenv(EnvLogrusCaller)
+		switch strings.ToLower(report) {
+		case "true", "1":
+			log.SetReportCaller(true)
+		}
+	}
 
 	// Set level.
 	if l, ok := os.LookupEnv(EnvLogrusLevel); ok {
@@ -92,7 +103,7 @@ func WithSentryHook(rc *raven.Client) LogrusOption {
 type (
 	// A LogrusConfig configures a logrus.Logger.
 	LogrusConfig struct {
-		// Logging-related options.
+		// Output-related options.
 		Output        io.Writer
 		TextFormatter logrus.TextFormatter
 		JSONFormatter logrus.JSONFormatter
