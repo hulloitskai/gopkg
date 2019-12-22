@@ -23,10 +23,10 @@ func UnmarshalerHookFunc() mapstructure.DecodeHookFunc {
 		dst reflect.Type,
 		val zero.Interface,
 	) (zero.Interface, error) {
+		if dst.Kind() != reflect.Ptr {
+			dst = reflect.PtrTo(dst)
+		}
 		if dst.Implements(unmarshalerType) {
-			if dst.Kind() != reflect.Ptr {
-				return nil, errors.New("mapstructx: target is not a pointer")
-			}
 			var (
 				value        = reflect.New(dst.Elem())
 				unmarshaller = value.Interface().(Unmarshaler)
