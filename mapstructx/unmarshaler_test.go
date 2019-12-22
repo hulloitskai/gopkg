@@ -26,7 +26,10 @@ func (m *wrapper) UnmarshalMap(v zero.Interface) error {
 func TestUnmarshaler(t *testing.T) {
 	var (
 		data struct {
-			Wrapped *wrapper `mapstructure:"wrapped"`
+			WrappedPtr *wrapper `mapstructure:"wrapped"`
+		}
+		data2 struct {
+			Wrapped wrapper `mapstructure:"wrapped"`
 		}
 		input = map[string]string{
 			"wrapped": "hello",
@@ -35,9 +38,18 @@ func TestUnmarshaler(t *testing.T) {
 	if err := mapstructx.Unmarshal(input, &data); err != nil {
 		t.Fatalf("Failed to unmarshal: %+v", err)
 	}
+	if err := mapstructx.Unmarshal(input, &data2); err != nil {
+		t.Fatalf("Failed to unmarshal: %+v", err)
+	}
 	{
 		const expected = "hello"
-		if value := data.Wrapped.internal; value != expected {
+		if value := data.WrappedPtr.internal; value != expected {
+			t.Errorf(
+				"Expected data.WrappedPtr.internal to be '%s', but got '%s'",
+				expected, value,
+			)
+		}
+		if value := data2.Wrapped.internal; value != expected {
 			t.Errorf(
 				"Expected data.Wrapped.internal to be '%s', but got '%s'",
 				expected, value,

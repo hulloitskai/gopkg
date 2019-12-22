@@ -23,16 +23,23 @@ func UnmarshalerHookFunc() mapstructure.DecodeHookFunc {
 		dst reflect.Type,
 		val zero.Interface,
 	) (zero.Interface, error) {
+		ptr := dst
 		if dst.Kind() != reflect.Ptr {
-			dst = reflect.PtrTo(dst)
+			ptr = reflect.PtrTo(dst)
+			if ptr == src {
+				return val, nil
+			}
 		}
-		if dst.Implements(unmarshalerType) {
+		if ptr.Implements(unmarshalerType) {
 			var (
-				value        = reflect.New(dst.Elem())
+				value        = reflect.New(ptr.Elem())
 				unmarshaller = value.Interface().(Unmarshaler)
 			)
 			if err := unmarshaller.UnmarshalMap(val); err != nil {
 				return nil, errors.Wrap(err, "mapstructx: unmarshal map")
+			}
+			if ptr != dst {
+				return value.Elem().Interface(), nil
 			}
 			return unmarshaller, nil
 		}
