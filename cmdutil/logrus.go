@@ -27,7 +27,8 @@ const (
 func NewLogger(opts ...LogrusOption) *logrus.Entry {
 	// Build config.
 	cfg := LogrusConfig{
-		Output: os.Stdout,
+		Output:       os.Stdout,
+		ReportCaller: true,
 		TextFormatter: logrus.TextFormatter{
 			EnvironmentOverrideColors: true,
 		},
@@ -39,6 +40,7 @@ func NewLogger(opts ...LogrusOption) *logrus.Entry {
 	// Create logger.
 	log := logrus.New()
 	log.SetOutput(cfg.Output)
+	log.SetReportCaller(cfg.ReportCaller)
 
 	// Set level.
 	if l, ok := os.LookupEnv(EnvLogrusLevel); ok {
@@ -89,10 +91,17 @@ func WithSentryHook(rc *raven.Client) LogrusOption {
 	return func(cfg *LogrusConfig) { cfg.Raven = rc }
 }
 
+// WithReportCaller configures Sentry to report call invocation details.
+func WithReportCaller(report bool) LogrusOption {
+	return func(cfg *LogrusConfig) { cfg.ReportCaller = report }
+}
+
 type (
 	// A LogrusConfig configures a logrus.Logger.
 	LogrusConfig struct {
-		// Logging-related options.
+		ReportCaller bool
+
+		// Output-related options.
 		Output        io.Writer
 		TextFormatter logrus.TextFormatter
 		JSONFormatter logrus.JSONFormatter
