@@ -1,6 +1,6 @@
 package zero
 
-// Empty returns an empty Struct.
+// Empty creates an empty Struct.
 func Empty() Struct { return Struct{} }
 
 type (
@@ -9,7 +9,7 @@ type (
 	// It holds no information, and has a size of zero.
 	Struct = struct{}
 
-	// Interface is an empty interface.
+	// Interface is the empty interface.
 	//
 	// It says nothing; all values implement the empty interface.
 	Interface = interface{}
