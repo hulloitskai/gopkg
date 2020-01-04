@@ -10,13 +10,13 @@ const GoEnvKey = "GOENV"
 
 // Well-known values for 'GOENV'.
 const (
-	GoEnvProduction  = "production"
-	GoEnvDevelopment = "development"
+	EnvProduction  = "production"
+	EnvDevelopment = "development"
 )
 
-// GetGoEnv gets the current environment value for 'GOENV'.
-func GetGoEnv() string { return os.Getenv(GoEnvKey) }
+// GoEnv reteurns the current environment value for 'GOENV'.
+func GoEnv() string { return os.Getenv(GoEnvKey) }
 
-// LookupGoEnv is like GoGetEnv, except it also returns true if 'GOENV' was
-// set, and false otherwise.
+// LookupGoEnv is like GetEnv, except it additionally returns true if 'GOENV'
+// was set, and false otherwise.
 func LookupGoEnv() (string, bool) { return os.LookupEnv(GoEnvKey) }
