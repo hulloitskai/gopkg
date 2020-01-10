@@ -22,8 +22,9 @@ func NewLogger(opts ...Option) (*logrus.Entry, error) {
 
 	// Vary config based on GOENV.
 	if configutil.GoEnv() == configutil.EnvProduction {
-		cfg.Format = JSONFormat
 		cfg.Level = logrus.InfoLevel
+		cfg.Format = JSONFormat
+		cfg.ReportCaller = true
 	}
 
 	// Modify config from options.

@@ -11,8 +11,9 @@ import (
 )
 
 const (
-	// TypeKey is the field key used to store the logging object's type name.
-	TypeKey = "type"
+	// SourceKey is the field key used to store the type name of the logging
+	// source.
+	SourceKey = "source"
 
 	// MethodKey is the field key used to store the method name where the logger
 	// is being called.
@@ -23,10 +24,10 @@ const (
 	ComponentKey = "component"
 )
 
-// WithType adds type name of v to a logrus.Entry.
-func WithType(e *logrus.Entry, v zero.Interface) *logrus.Entry {
+// WithSource adds the type name of v to a logrus.Entry.
+func WithSource(e *logrus.Entry, v zero.Interface) *logrus.Entry {
 	name := name.OfType(v)
-	return e.WithField(TypeKey, name)
+	return e.WithField(SourceKey, name)
 }
 
 // WithMethod adds the name of the method v to the logrus.Entry.
