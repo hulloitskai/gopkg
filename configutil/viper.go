@@ -26,12 +26,7 @@ func UnmarshalViper(
 	ptr zero.Interface,
 	opts ...viper.DecoderConfigOption,
 ) error {
-	opts = append(
-		[]viper.DecoderConfigOption{
-			mapstructx.WithDecodeHook(mapstructx.UnmarshalerHookFunc()),
-			mapstructx.WithTagName("viper"),
-		},
-		opts...,
-	)
+	withHook := mapstructx.WithDecodeHook(mapstructx.UnmarshalerHookFunc())
+	opts = append([]viper.DecoderConfigOption{withHook}, opts...)
 	return v.Unmarshal(ptr, opts...)
 }
